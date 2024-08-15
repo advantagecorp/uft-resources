@@ -1,0 +1,32 @@
+Option Explicit
+Dim dbConnection, dbQuery, dbResults, recordCounter
+
+'create and open a connection to a database
+Set dbConnection = Createobject("ADODB.Connection")
+dbConnection.Provider = "Microsoft.jet.oledb.4.0"
+dbConnection.Open("C:\Program Files (x86)\Micro Focus\Unified Functional Testing\samples\Flights Application\flight32.mdb")
+
+'create a result set and run a query to populate it with data
+dbQuery = "SELECT TOP 5 Order_Number, Customer_Name, Flight_Number, Tickets_Ordered " _
+		 & " FROM Orders" _
+		 & " ORDER BY Order_Number desc"
+Set dbResults = CreateObject("ADODB.Recordset")
+dbResults.Open dbQuery , dbConnection
+
+dbResults.MoveFirst
+recordCounter = 1
+ 
+Do Until dbResults.EOF
+	DataTable.SetCurrentRow recordCounter
+	DataTable("OrderNo") = dbResults.Fields("Order_Number")
+	DataTable("Name") = dbResults.Fields("Customer_Name")
+	DataTable("FlightNo") =dbResults.Fields("Flight_Number")
+	DataTable("Tickets") = dbResults.Fields("Tickets_Ordered")
+		
+	recordCounter = recordCounter + 1
+	dbResults.MoveNext
+Loop
+
+dbConnection.Close
+Set dbConnection = Nothing
+Set dbResults = Nothing
